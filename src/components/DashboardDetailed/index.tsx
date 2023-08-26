@@ -3,11 +3,10 @@ import { Layout, Menu, Button, Row, Col, Table, Space } from 'antd';
 import { DeleteOutlined, FormOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MinusCircleOutlined, PlusCircleOutlined, VideoCameraOutlined } from '@ant-design/icons'
 import { SideAvatar } from '../Avatar';
 import { TableContent } from './styled';
-import { useAppContext } from '../../config/context/hook';
-import { Paragraph } from '../../styles/global';
 import Column from 'antd/es/table/Column';
 import { UpdateModal } from '../Modal/UpdateModal';
 import { LogoutButton } from '../LogoutButton';
+import { useFetchCrud } from '../../hooks/useFetchCrud';
 
 interface CrudItem {
     data: any
@@ -20,7 +19,8 @@ export const DashboardDetailed: React.FC<{ setSelectedItem: string; onBackToGene
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const { Header, Sider } = Layout
-    const { data }: CrudItem = useAppContext()
+    /* const { data }: CrudItem = useAppContext() */
+    const { data, loading, error } = useFetchCrud();
 
 
     const dataSource = data

@@ -5,8 +5,10 @@ import { SideAvatar } from "../Avatar";
 import { Paragraph } from "../../styles/global";
 import { PlusOutlined } from "@ant-design/icons";
 import { CreateModal } from "../Modal/CreateModal";
-import { useAppContext } from "../../config/context/hook";
+/* import { useAppContext } from "../../config/context/hook"; */
 import { LogoutButton } from "../LogoutButton";
+import { useFetchCrud } from "../../hooks/useFetchCrud";
+
 
 
 export const GeneralDashboard: React.FC<{
@@ -14,7 +16,8 @@ export const GeneralDashboard: React.FC<{
 }> = ({ onCardClick }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const { data } = useAppContext()
+    /* const { data } = useAppContext() */
+    const { data, loading, error } = useFetchCrud();
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -38,7 +41,7 @@ export const GeneralDashboard: React.FC<{
     let incomingTotal = 0;
     let expenseTotal = 0;
 
-    data.forEach((item) => {
+    data.forEach((item: { type: string; value: number; }) => {
         if (item.type === 'Incoming') {
             incomingTotal += item.value;
         } else if (item.type === 'Expense') {
