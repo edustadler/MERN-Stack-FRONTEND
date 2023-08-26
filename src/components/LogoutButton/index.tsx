@@ -1,16 +1,19 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PoweroffOutlined } from "@ant-design/icons";
 import { Button } from "antd"
-import { useState } from "react";
 import { useLogout } from "../../hooks/useLogout";
 
 export const LogoutButton = () => {
     const [loadings, setLoadings] = useState<boolean[]>([]);
     const { logout, isLoading } = useLogout();
+    const navigate = useNavigate();
     
 
     const handleLogout = async () => {
         enterLoading(1)
         await logout();
+        navigate('/login')
     };
 
     const enterLoading = (index: number) => {
@@ -28,7 +31,7 @@ export const LogoutButton = () => {
             });
         }, 6000);
     };
-    
+
     return (
         <Button
             type="text"

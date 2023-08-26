@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
-import { useNavigate } from 'react-router-dom';
+
 
 export interface LogoutHook {
     logout: () => Promise<void>;
@@ -14,7 +14,6 @@ export const useLogout = (): LogoutHook => {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [, removeCookies] = useCookies();
-    const navigate = useNavigate();
     
 
     const logout = async (): Promise<void> => {
@@ -28,7 +27,7 @@ export const useLogout = (): LogoutHook => {
             // Remove the refreshToken cookie
             removeCookies('refreshToken', { path: '/' });
             setIsLoading(false);
-            navigate('/login')
+            
         } catch (error) {
             setIsLoading(false);
             if (axios.isAxiosError(error)) {

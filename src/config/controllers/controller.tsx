@@ -5,7 +5,7 @@ import axios from 'axios';
 const API_BASE_URL = process.env.API_BASE || 'http://localhost:9999/v1/item';
 
 interface ControllerProps {
-    id: string;
+    id?: string;
     data: string[];
 }
 
@@ -20,7 +20,7 @@ const Controller = {
             throw new Error('Failed to fetch data from the backend');
         }
     },
-    deleteData: async ({ id }: ControllerProps) => {
+    deleteData: async ({ id }: { id: string }) => {
         try {
             const response = await axios.delete(`${API_BASE_URL}/${id}`);
             return response;
