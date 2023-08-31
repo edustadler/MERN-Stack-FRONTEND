@@ -30,6 +30,23 @@ export const NewUser: React.FC<CollectionCreateFormProps> = ({ open, onCreate, o
         await signup(values)
     }
 
+    const handleModalOk = () => {
+        form
+            .validateFields()
+            .then(async (values) => {
+                try {
+                    await handleSubmit(values);
+                    form.resetFields();
+                    onCreate(values);
+                } catch (error) {
+                    console.error('Error during submission:', error);
+                }
+            })
+            .catch((info) => {
+                console.log('Validation Failed:', info);
+            });
+    };
+
     return (
         <Modal
             open={open}
@@ -37,20 +54,7 @@ export const NewUser: React.FC<CollectionCreateFormProps> = ({ open, onCreate, o
             okText="Create"
             cancelText="Cancel"
             onCancel={onCancel}
-            onOk={() => {
-                form
-                    .validateFields()
-                    .then((values) => {
-
-                        handleSubmit(values)
-                        form.resetFields();
-                        onCreate(values);
-                    })
-                    .catch((info) => {
-                        console.log('Validate Failed:', info);
-                    });
-            }
-            }
+            onOk={handleModalOk}
             width={'31.25rem'}
             bodyStyle={{ paddingTop: '1rem' }}
         >

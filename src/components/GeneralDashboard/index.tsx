@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TotalCard } from "../TotalCard";
 import { Button, Col, Layout, Row } from 'antd'
 import { SideAvatar } from "../Avatar";
@@ -8,28 +8,39 @@ import { CreateModal } from "../Modal/CreateModal";
 /* import { useAppContext } from "../../config/context/hook"; */
 import { LogoutButton } from "../LogoutButton";
 import { useFetchCrud } from "../../hooks/useFetchCrud";
+import Controller from "../../config/controllers/controller";
 
-
+interface Item {
+    title: string;
+    type: string;
+    category: string;
+    value: number;
+}
 
 export const GeneralDashboard: React.FC<{
     onCardClick: (selectedMenuItem: string) => void;
 }> = ({ onCardClick }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    /* const { data } = useAppContext() */
-    const { data, loading, error } = useFetchCrud();
+    const [data, setData] = useState<Item[]>([]);
+
+
+    const fetchData = async () => {
+        try {
+            const fetchedData = await Controller.getData();
+            setData(fetchedData);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    
+
 
     const showModal = () => {
         setIsModalVisible(true);
     };
 
-    const handleModalOk = () => {
-        setConfirmLoading(true);
-        setTimeout(() => {
-            setIsModalVisible(false);
-            setConfirmLoading(false);
-        }, 2000);
-    };
+
 
     const handleModalCancel = () => {
         setIsModalVisible(false);
@@ -38,19 +49,19 @@ export const GeneralDashboard: React.FC<{
     const { Sider, Content } = Layout
 
     // Calculate totals
-    let incomingTotal = 0;
-    let expenseTotal = 0;
+    const incomingTotal = data
+        .filter(item => item.type === 'Incoming')
+        .reduce((total, item) => total + item.value, 0);
 
-    data.forEach((item: { type: string; value: number; }) => {
-        if (item.type === 'Incoming') {
-            incomingTotal += item.value;
-        } else if (item.type === 'Expense') {
-            expenseTotal += item.value;
-        }
-    });
+    const expenseTotal = data
+        .filter(item => item.type === 'Expense')
+        .reduce((total, item) => total + item.value, 0);
 
     const total = incomingTotal - expenseTotal;
 
+    useEffect(() => {
+        fetchData();
+    }, [handleModalCancel]);
 
 
     return (
@@ -58,7 +69,7 @@ export const GeneralDashboard: React.FC<{
             <Layout style={{ height: '100vh' }}>
                 <Sider trigger={null} style={{ height: '100vh' }}>
                     <SideAvatar />
-                    <LogoutButton/>
+                    <LogoutButton />
                 </Sider>
                 <Layout style={{ padding: '4rem' }}>
                     <Content>
@@ -100,7 +111,7 @@ export const GeneralDashboard: React.FC<{
                 </Layout>
             </Layout>
 
-            <CreateModal visible={isModalVisible} onOk={handleModalOk} onCancel={handleModalCancel} loading={confirmLoading} />
+            <CreateModal visible={isModalVisible} onCancel={handleModalCancel} loading={confirmLoading} />
         </>
     )
 }

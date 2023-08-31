@@ -6,7 +6,12 @@ const API_BASE_URL = process.env.API_BASE || 'http://localhost:9999/v1/item';
 
 interface ControllerProps {
     id?: string;
-    data: string[];
+    data: {
+        title: string;
+        type: string;
+        category: string;
+        value: number;
+    };
 }
 
 const Controller = {

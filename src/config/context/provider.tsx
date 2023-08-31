@@ -10,35 +10,29 @@ interface IProps {
 
 export const AppContextProvider = ({ children }: IProps) => {
     const [data, setData] = useState([]);
-    
-    
+
+
 
     const [state, dispatch] = useReducer(authReducer, {
         user: null
     })
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const fetchedData: any = await Controller.getData();
-
-                setData(fetchedData);
-
-            } catch (error) {
-                // Handle error
+        if (state.user) {
+            // Only fetch data if the user is logged in
+            async function fetchData() {
+                try {
+                    const fetchedData = await Controller.getData();
+                    setData(fetchedData);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    // You can also show a user-friendly error message here.
+                }
             }
+
+            fetchData();
         }
-
-        /* async function deleteItem(id: string) {
-            try {
-                const response: any = await Controller.deleteData(id);
-            } catch (error) {
-                
-            }
-        } */
-
-        fetchData();
-    }, []);
+    }, [state.user]);
 
     return (
         <>

@@ -5,6 +5,7 @@ export interface CrudHook {
     data: any;
     error: string | null;
     loading: boolean;
+    setData: any;
 }
 
 export const useFetchCrud = (): CrudHook => {
@@ -27,5 +28,5 @@ export const useFetchCrud = (): CrudHook => {
         fetchData();
     }, []);
 
-    return { data, loading, error };
+    return { data, loading, error, setData };
 };

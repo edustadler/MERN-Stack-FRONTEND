@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Layout, Menu, Button, Row, Col, Table, Space } from 'antd';
 import { DeleteOutlined, FormOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MinusCircleOutlined, PlusCircleOutlined, VideoCameraOutlined } from '@ant-design/icons'
 import { SideAvatar } from '../Avatar';
@@ -7,10 +7,10 @@ import Column from 'antd/es/table/Column';
 import { UpdateModal } from '../Modal/UpdateModal';
 import { LogoutButton } from '../LogoutButton';
 import { useFetchCrud } from '../../hooks/useFetchCrud';
+import Controller from '../../config/controllers/controller';
 
-interface CrudItem {
-    data: any
-}
+
+
 
 export const DashboardDetailed: React.FC<{ setSelectedItem: string; onBackToGeneral: () => void }> = ({ setSelectedItem, onBackToGeneral }) => {
 
@@ -18,14 +18,31 @@ export const DashboardDetailed: React.FC<{ setSelectedItem: string; onBackToGene
     const [selectedMenuItem, setSelectedMenuItem] = useState(setSelectedItem || '1');
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [refreshFlag, setRefreshFlag] = useState(0);
     const { Header, Sider } = Layout
-    /* const { data }: CrudItem = useAppContext() */
-    const { data, loading, error } = useFetchCrud();
+    const { data, setData } = useFetchCrud();
 
+    const refetchData = () => {
+        setRefreshFlag(refreshFlag + 1);
+    };
 
-    const dataSource = data
+    const handleDelete = async (record: any) => {
+        try {
+            await Controller.deleteData({ id: record._id });
+            setRefreshFlag(refreshFlag + 1); // Trigger useEffect by incrementing refreshFlag
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            const fetchedData = await Controller.getData();
+            setData(fetchedData);
+        };
 
+        fetchData();
+    }, [refreshFlag]);
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -42,6 +59,7 @@ export const DashboardDetailed: React.FC<{ setSelectedItem: string; onBackToGene
     const handleModalCancel = () => {
         setIsModalVisible(false);
     };
+
 
     return (
         <>
@@ -97,7 +115,7 @@ export const DashboardDetailed: React.FC<{ setSelectedItem: string; onBackToGene
                         {
                             selectedMenuItem === '3' &&
                             (
-                                <Table dataSource={dataSource} pagination={false}>
+                                <Table dataSource={data} pagination={false}>
                                     <Column title="Title" dataIndex="title" key="title" />
                                     <Column title='Value' dataIndex='value' key='value' render={(text, record) => `$${parseFloat(text).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
                                     <Column title="Category" dataIndex="category" key="category" />
@@ -111,7 +129,7 @@ export const DashboardDetailed: React.FC<{ setSelectedItem: string; onBackToGene
                                             <>
                                                 <Space>
                                                     <Button type="primary" onClick={showModal}><FormOutlined /></Button>
-                                                    <Button type="primary" danger><DeleteOutlined /></Button>
+                                                    <Button type="primary" danger onClick={() => handleDelete(record)}><DeleteOutlined /></Button>
                                                 </Space>
                                             </>
                                         )}
@@ -123,7 +141,7 @@ export const DashboardDetailed: React.FC<{ setSelectedItem: string; onBackToGene
 
                         {
                             selectedMenuItem === '1' && (
-                                <Table dataSource={dataSource.filter((item: { type: string; }) => item.type === 'Incoming')} pagination={false}>
+                                <Table dataSource={data.filter((item: { type: string; }) => item.type === 'Incoming')} pagination={false}>
                                     <Column title="Title" dataIndex="title" key="title" />
                                     <Column title='Value' dataIndex='value' key='value' render={(text, record) => `$${parseFloat(text).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
                                     <Column title="Category" dataIndex="category" key="category" />
@@ -137,7 +155,7 @@ export const DashboardDetailed: React.FC<{ setSelectedItem: string; onBackToGene
                                             <>
                                                 <Space>
                                                     <Button type="primary" onClick={showModal}><FormOutlined /></Button>
-                                                    <Button type="primary" danger><DeleteOutlined /></Button>
+                                                    <Button type="primary" danger onClick={() => handleDelete(record)}><DeleteOutlined /></Button>
                                                 </Space>
                                             </>
                                         )}
@@ -149,7 +167,7 @@ export const DashboardDetailed: React.FC<{ setSelectedItem: string; onBackToGene
 
                         {
                             selectedMenuItem === '2' && (
-                                <Table dataSource={dataSource.filter((item: { type: string; }) => item.type === 'Expense')} pagination={false}>
+                                <Table dataSource={data.filter((item: { type: string; }) => item.type === 'Expense')} pagination={false}>
                                     <Column title="Title" dataIndex="title" key="title" />
                                     <Column title='Value' dataIndex='value' key='value' render={(text, record) => `$${parseFloat(text).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
                                     <Column title="Category" dataIndex="category" key="category" />
@@ -163,7 +181,7 @@ export const DashboardDetailed: React.FC<{ setSelectedItem: string; onBackToGene
                                             <>
                                                 <Space>
                                                     <Button type="primary" onClick={showModal}><FormOutlined /></Button>
-                                                    <Button type="primary" danger><DeleteOutlined /></Button>
+                                                    <Button type="primary" danger onClick={() => handleDelete(record)}><DeleteOutlined /></Button>
                                                 </Space>
                                             </>
                                         )}

@@ -23,7 +23,13 @@ describe('Controller', () => {
   });
 
   it('creates data successfully', async () => {
-    const mockData = ['New Item'];
+    const mockData =
+    {
+      title: 'title',
+      type: 'Expense',
+      category: 'category',
+      value: 50, // Convert value to a number
+    };
     (axios.post as jest.Mock).mockResolvedValue(mockResponse);
 
     const response = await Controller.createData({ data: mockData });
@@ -32,7 +38,13 @@ describe('Controller', () => {
 
   it('updates data successfully', async () => {
     const mockId = '123';
-    const mockData = ['Updated Item'];
+    const mockData =
+    {
+      title: 'title',
+      type: 'Expense',
+      category: 'category',
+      value: 50, // Convert value to a number
+    };
     (axios.put as jest.Mock).mockResolvedValue({ data: mockData });
 
     const response = await Controller.updateData({ id: mockId, data: mockData });
