@@ -20,7 +20,6 @@ interface FormDataItem {
 
 export const CreateModal: React.FC<createProps> = ({ visible, onCancel, loading }) => {
 
-    const [isModalVisible, setIsModalVisible] = useState(false);
     const [title, setTitle] = useState('')
     const [type, setType] = useState('')
     const [category, setCategory] = useState('')
@@ -31,7 +30,7 @@ export const CreateModal: React.FC<createProps> = ({ visible, onCancel, loading 
     const addNewCrud = (newData: FormDataItem) => {
         setFormData(prevCrudData => [...prevCrudData, newData]);
     };
-
+    
     const onOk = async () => {
         try {
             const formDataWithDate = {
@@ -40,7 +39,7 @@ export const CreateModal: React.FC<createProps> = ({ visible, onCancel, loading 
                 type: type,
                 value: parseFloat(value),
             };
-
+            
             const response = await Controller.createData({ data: formDataWithDate });
             if (response.status === 200) {
                 addNewCrud(response.data);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Input, Select } from 'antd';
 import { FormModal, FormWrap2 } from './styled';
 
@@ -7,10 +7,26 @@ interface updateProps {
     visible?: boolean;
     onOk?: any;
     onCancel?: any;
-    loading?: any
+    loading?: any;
+    selectedItemData: any
 }
 
-export const UpdateModal: React.FC<updateProps> = ({ visible, onOk, onCancel, loading }) => {
+export const UpdateModal: React.FC<updateProps> = ({ visible, onOk, onCancel, loading, selectedItemData }) => {
+
+    const [formData, setFormData] = useState(selectedItemData || {});
+
+    const handleInputChange = (e: any) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
+
+    useEffect(() => {
+        // Update the formData when selectedItemData changes
+        setFormData(selectedItemData);
+    }, [selectedItemData]);
 
     return (
         <>
@@ -28,8 +44,10 @@ export const UpdateModal: React.FC<updateProps> = ({ visible, onOk, onCancel, lo
                         <Input
                             placeholder='Title'
                             name='title'
+                            value={formData?.title}
+                            onChange={handleInputChange}
                         />
-                        <Select style={{ width: '45%' }} placeholder='Type'>
+                        <Select style={{ width: '45%' }} placeholder='Type' value={formData?.type || ''} onChange={(value) => setFormData({ ...formData, type: value })}>
                             <Select.Option value="incoming" >Incoming</Select.Option>
                             <Select.Option value="expense">Expense</Select.Option>
                         </Select>
@@ -37,11 +55,14 @@ export const UpdateModal: React.FC<updateProps> = ({ visible, onOk, onCancel, lo
                     <FormWrap2 direction='column'>
                         <Input
                             placeholder='Category'
-                            name='category'
+                            name='category' value={formData?.category || ''}
+                            onChange={(value) => setFormData({ ...formData, category: value })}
                         />
                         <Input
                             placeholder='Value'
                             type='number'
+                            value={formData?.value || ''}
+                            onChange={(v) => setFormData({ ...formData, value: v })}
                         />
                     </FormWrap2>
                 </FormModal>

@@ -45,6 +45,10 @@ body {
   margin-bottom: 1rem;
 }
 
+.ant-skeleton-paragraph li {
+  height: 1.875rem;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

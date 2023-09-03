@@ -33,11 +33,14 @@ export const GeneralDashboard: React.FC<{
             console.error(error);
         }
     };
-    
 
+    const handleLoading = () => {
+        setConfirmLoading(confirmLoading)
+    }
 
     const showModal = () => {
         setIsModalVisible(true);
+
     };
 
 
@@ -61,7 +64,7 @@ export const GeneralDashboard: React.FC<{
 
     useEffect(() => {
         fetchData();
-    }, [handleModalCancel]);
+    }, [isModalVisible]);
 
 
     return (
@@ -79,32 +82,31 @@ export const GeneralDashboard: React.FC<{
                             </Col>
                         </Row>
                         <Row gutter={20} justify={'center'} style={{ marginBottom: '1.25rem' }}>
-
                             <React.Fragment>
                                 <Col xl={{ span: 8 }} xxl={{ span: 6 }}>
-                                    <TotalCard State={'Incoming'} Click={() => onCardClick('1')}>
+                                    <TotalCard State={'Incoming'} Click={() => onCardClick('1')} isLoading={!data.length}>
                                         {`$ ${incomingTotal.toFixed(2)}`}
                                     </TotalCard>
                                 </Col>
                             </React.Fragment>
                             <React.Fragment>
                                 <Col xl={{ span: 8 }} xxl={{ span: 6 }}>
-                                    <TotalCard State={'Expenses'} Click={() => onCardClick('2')}>
+                                    <TotalCard State={'Expenses'} Click={() => onCardClick('2')} isLoading={!data.length}>
                                         {`$ ${expenseTotal.toFixed(2)}`}
                                     </TotalCard>
                                 </Col>
                             </React.Fragment>
                             <React.Fragment>
                                 <Col xl={{ span: 8 }} xxl={{ span: 6 }}>
-                                    <TotalCard State={'Total'} Click={() => onCardClick('3')} Type={total >= 0 ? "Incoming" : "Expense"}>
+                                    <TotalCard State={'Total'} Click={() => onCardClick('3')} Type={total >= 0 ? "Incoming" : "Expense"} isLoading={!data.length}>
                                         {`$ ${total.toFixed(2)}`}
                                     </TotalCard>
                                 </Col>
                             </React.Fragment>
                         </Row >
-                        <Row>
-                            <Col span={5} offset={18}>
-                                <Paragraph>Click to see the selected data</Paragraph>
+                        <Row gutter={0}>
+                            <Col xl={{ span: 24 }} xxl={{ span: 16, push: 3 }}>
+                                <Paragraph>Click on the box for detailed information.</Paragraph>
                             </Col>
                         </Row>
                     </Content>
